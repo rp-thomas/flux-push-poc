@@ -23,6 +23,7 @@ spec:
       containers:
       - name: hello-go
         image: ghcr.io/rp-thomas/flux-push-poc:main
+        imagePullPolicy: Always
         resources:
           limits:
             memory: "128Mi"
