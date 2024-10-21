@@ -92,10 +92,13 @@ jobs:
 
   deploy-on-kind:
     runs-on: ubuntu-latest
-
+    needs: build
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+    - name: set label
+      run: |
+        find . -type f -name "infrastructure/*.yaml" -exec sed -i "s/VERSION_LABEL_DEFAULT/${{ needs.build.meta.outputs.tags }}/g" {} + 
 
     - name: Install kind
       uses: helm/kind-action@v1
@@ -121,9 +124,9 @@ jobs:
           --path=./clusters/kind-cluster \
           --personal
     
-    - name: Verify Flux installation
+    - name: Verify deployment
       run: |
         flux get kustomizations
         kubectl get deployments -n app
-        ./check.sh app hello-go "app\.kubernetes\.io/version" abc123
+        ./check.sh app hello-go "app\.kubernetes\.io/version" ${{ needs.build.meta.outputs.tags }}
         kubectl describe deployments -n app hello-go
