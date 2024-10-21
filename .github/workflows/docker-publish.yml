@@ -122,3 +122,6 @@ jobs:
       run: |
         flux get kustomizations
         kubectl get deployments -n app
+        sleep 20
+        kubectl get deployments -n app
+        kubectl describe deployments -n app hello-go
