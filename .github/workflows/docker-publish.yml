@@ -89,10 +89,6 @@ jobs:
 
   deploy-on-kind:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-      id-token: write
 
     steps:
     - name: Checkout Code
@@ -112,7 +108,7 @@ jobs:
 
     - name: Bootstrap Flux
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Add the required token for GitOps repository access
+        GITHUB_TOKEN: ${{ secrets.FLUX_BOOTSTRAP_TOKEN }}  # Add the required token for GitOps repository access
       run: |
         flux check --pre
         flux bootstrap github \
