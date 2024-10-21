@@ -22,7 +22,7 @@ jobs:
       # with sigstore/fulcio when running outside of PRs.
       id-token: write
     outputs:
-      meta_tags: ${{ steps.meta.outputs.tags }}
+      meta_tags: ${{ steps.meta.outputs.json.labels.org.opencontainers.image.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
