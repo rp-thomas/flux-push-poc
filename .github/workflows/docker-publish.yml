@@ -21,7 +21,8 @@ jobs:
       # This is used to complete the identity challenge
       # with sigstore/fulcio when running outside of PRs.
       id-token: write
-
+    outputs:
+      meta_tags: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -93,12 +94,14 @@ jobs:
   deploy-on-kind:
     runs-on: ubuntu-latest
     needs: build
+    env:
+      META_TAGS: ${{needs.build.outputs.meta_tags}}
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
     - name: set label
       run: |
-        find . -type f -name "infrastructure/*.yaml" -exec sed -i "s/VERSION_LABEL_DEFAULT/${{ needs.build.meta.outputs.tags }}/g" {} + 
+        find . -type f -name "infrastructure/*.yaml" -exec sed -i "s/VERSION_LABEL_DEFAULT/$META_TAGS/g" {} + 
         cat infrastructure/kustomization.yaml
 
     - uses: stefanzweifel/git-auto-commit-action@v5
@@ -131,5 +134,5 @@ jobs:
       run: |
         flux get kustomizations
         kubectl get deployments -n app
-        ./check.sh app hello-go "app\.kubernetes\.io/version" ${{ needs.build.meta.outputs.tags }}
+        ./check.sh app hello-go "app\.kubernetes\.io/version" $META_TAGS
         kubectl describe deployments -n app hello-go
