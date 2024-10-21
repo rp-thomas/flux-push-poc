@@ -89,6 +89,11 @@ jobs:
 
   deploy-on-kind:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
