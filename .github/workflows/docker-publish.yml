@@ -122,6 +122,5 @@ jobs:
       run: |
         flux get kustomizations
         kubectl get deployments -n app
-        sleep 20
-        kubectl get deployments -n app
+        ./check.sh app hello-go "app\.kubernetes\.io/version" abc123
         kubectl describe deployments -n app hello-go
