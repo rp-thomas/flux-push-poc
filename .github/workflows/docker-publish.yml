@@ -99,6 +99,9 @@ jobs:
     - name: set label
       run: |
         find . -type f -name "infrastructure/*.yaml" -exec sed -i "s/VERSION_LABEL_DEFAULT/${{ needs.build.meta.outputs.tags }}/g" {} + 
+        cat infrastructure/kustomization.yaml
+
+    - uses: stefanzweifel/git-auto-commit-action@v5
 
     - name: Install kind
       uses: helm/kind-action@v1
