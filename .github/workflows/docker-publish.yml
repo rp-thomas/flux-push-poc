@@ -14,7 +14,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -87,3 +86,38 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+
+  deploy-on-kind:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install kind
+      uses: helm/kind-action@v1
+      with:
+        cluster_name: flux-cluster
+
+    - name: Verify kubectl is installed
+      run: kubectl version --client
+
+    - name: Install Flux CLI
+      run: |
+        curl -s https://fluxcd.io/install.sh | sudo bash
+
+    - name: Bootstrap Flux
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Add the required token for GitOps repository access
+      run: |
+        flux check --pre
+        flux bootstrap github \
+          --owner=${{ github.actor }} \
+          --repository=${{ github.repository }} \
+          --branch=main \
+          --path=./clusters/kind-cluster \
+          --personal
+    
+    - name: Verify Flux installation
+      run: |
+        flux get kustomizations
+        kubectl get deployments -n app
