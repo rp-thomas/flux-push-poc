@@ -7,4 +7,4 @@ labels:
   - includeSelectors: false
     includeTemplates: false
     pairs:
-      app.kubernetes.io/version: "VERSION_LABEL_DEFAULT"
+      app.kubernetes.io/version: "main-bfd5fe80bb22b30baa09c58436df05c4764cdb4b"
